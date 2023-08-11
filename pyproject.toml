@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "camera-package"
+version = "0.1.0"
+description = ""
+authors = ["Dennis <dn1607727@gmail.com>"]
+readme = "README.md"
+packages = [{include = "camera_package"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pyserial = "^3.5"
+matplotlib = "^3.7.2"
+numpy = "^1.25.2"
+pyqt5 = "^5.15.9"
+watchdog = "^3.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
