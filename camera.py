@@ -16,8 +16,8 @@ class Camera(tools.Tools, processing.Processing):
     photos_folder_name: str = 'Photos'
     num_start_jpg_digits: int = 5
     num_end_jpg_digits: int = 5
-    _COMPRESSION_RATIO = 0x36
-    _PHOTO_SIZE = 0x00
+    COMPRESSION_RATIO = 0x36
+    PHOTO_SIZE = 0x00
 
     def __init__(self, port: str = com_port, baud_rate: int = defualt_baud_rate) -> None:
         super().__init__()
@@ -37,7 +37,7 @@ class Camera(tools.Tools, processing.Processing):
         return list(basic_conf_info)
 
     def set_photo_compression(self) -> list:
-        self.camera.write(bytes(settings.set_compression_ratio_cmd) + self._COMPRESSION_RATIO.to_bytes(1, 'big'))
+        self.camera.write(bytes(settings.set_compression_ratio_cmd) + self.COMPRESSION_RATIO.to_bytes(1, 'big'))
         time.sleep(settings.TIMEOUT)
         self.camera.write(bytes(settings.get_compression_ratio_cmd))
         time.sleep(settings.TIMEOUT)
@@ -54,7 +54,7 @@ class Camera(tools.Tools, processing.Processing):
         return length
 
     def set_photo_size(self) -> None:
-        self.camera.write(bytes(settings.set_photo_size_cmd) + self._PHOTO_SIZE.to_bytes(1, 'big'))
+        self.camera.write(bytes(settings.set_photo_size_cmd) + self.PHOTO_SIZE.to_bytes(1, 'big'))
         time.sleep(settings.TIMEOUT)
 
     def take_photo(self) -> None:

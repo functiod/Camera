@@ -1,18 +1,22 @@
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QAbstractItemView, QFileDialog, QWidget
-from PyQt5.QtCore import QSettings
+from PyQt5.QtWidgets import QFileDialog
+# from PyQt5.QtCore import QSettings
 import sys
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import design
 import camera
+import tools
 
 class MainWindow(QtWidgets.QMainWindow, design.Ui_MainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.setupUi(self)
+        self.camera: None = None
+        self.tools: tools.Tools = tools.Tools()
         self.img_data: list = []
-        self.camera: camera.Camera = camera.Camera()
+        self.get_com_port_number.clicked.connect(self.get_comport)
+        self.init_device_button.clicked.connect(self.initialize_device)
         self.get_version_button.clicked.connect(self.output_version)
         self.reset_settings_button.clicked.connect(self.output_reset)
         self.get_photo_size_button.clicked.connect(self.output_photo_size)
@@ -30,6 +34,15 @@ class MainWindow(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.figure = Figure()
         self.canvas = FigureCanvas(self.figure)
         self.image_layout.addWidget(self.canvas)
+
+    def initialize_device(self) -> None:
+        self.camera: camera.Camera = camera.Camera(port = self.get_com_port_text.text())
+        self.init_device_alert.setText("Success!")
+
+    def get_comport(self) -> None:
+        self.get_com_port_text.setText(self.tools.find_comport())
+        if not self.get_com_port_text:
+            self.get_com_port_text.setText("No COM ports")
 
     def output_version(self) -> None:
         self.get_version_output.setText(self.camera.get_version())
@@ -55,13 +68,13 @@ class MainWindow(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     def set_compression(self) -> None:
         text: str = self.choose_photo_compr.currentText()
-        self.camera._COMPRESSION_RATIO = self.camera.set_compr_ratio(text)
+        self.camera.COMPRESSION_RATIO = self.camera.set_compr_ratio(text)
         self.camera.set_photo_compression()
         print('ratio set')
 
     def set_photo_size(self) -> None:
         text: str = self.choose_photo_size.currentText()
-        self.camera._PHOTO_SIZE = self.camera.choose_photo_size(text)
+        self.camera.PHOTO_SIZE = self.camera.choose_photo_size(text)
         self.camera.set_photo_size()
         print('size set')
 

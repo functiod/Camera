@@ -9,11 +9,12 @@ class Tools():
     def __init__(self) -> None:
         pass
 
-    def find_com_port_name(self) -> str:
-        comports: list = [port.description for port in serial.tools.list_ports.comports()]
-        description: str = [comport for comport in comports if self.device_description in comport][0]
-        port_name: str = description[description.find("COM"):-1]
-        return port_name
+    def find_comport(self) -> str | None:
+        ports: list = serial.tools.list_ports.comports()
+        for name in (ports):
+            if self.device_description in name.description:
+                return name.device
+        return None
 
     def set_compr_ratio(self, ratio: str) -> int:
         ratio_dict: dict = {
@@ -30,3 +31,6 @@ class Tools():
         }
         return size_dict[size]
 
+if __name__ == "__main__":
+    tools = Tools()
+    print(tools.find_comport())
