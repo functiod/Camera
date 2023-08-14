@@ -1,6 +1,5 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
-# from PyQt5.QtCore import QSettings
 import sys
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -15,6 +14,7 @@ class MainWindow(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.camera: None = None
         self.tools: tools.Tools = tools.Tools()
         self.img_data: list = []
+        self.img_data_clone: list = []
         self.get_com_port_number.clicked.connect(self.get_comport)
         self.init_device_button.clicked.connect(self.initialize_device)
         self.get_version_button.clicked.connect(self.output_version)
@@ -29,11 +29,11 @@ class MainWindow(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.set_photo_compression_button.clicked.connect(self.set_compression)
         self.set_photo_size_button.clicked.connect(self.set_photo_size)
         self.take_photo_button.clicked.connect(self.take_snap)
-        self.show_photo_button.clicked.connect(self.plot_image)
 
-        self.figure = Figure()
+        self.figure = Figure(tight_layout=True)
         self.canvas = FigureCanvas(self.figure)
         self.image_layout.addWidget(self.canvas)
+        self.ax = self.figure.add_subplot(111)
 
     def initialize_device(self) -> None:
         self.camera: camera.Camera = camera.Camera(port = self.get_com_port_text.text())
@@ -41,8 +41,6 @@ class MainWindow(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     def get_comport(self) -> None:
         self.get_com_port_text.setText(self.tools.find_comport())
-        if not self.get_com_port_text:
-            self.get_com_port_text.setText("No COM ports")
 
     def output_version(self) -> None:
         self.get_version_output.setText(self.camera.get_version())
@@ -58,13 +56,16 @@ class MainWindow(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.camera.take_photo()
         self.img_data = self.camera.read_fbuf(self.camera.get_fbuf_len())
         self.take_photo_alert.setText('Success')
+        self._remove_image()
+        self.plot_image()
+        self.img_data_clone[:] = self.img_data
+        self.img_data[:] = []
 
     def show_dialog(self) -> None:
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         file_name, _ = QFileDialog.getSaveFileName(self, "Choose saving path", "", "All files (*);;JPEG files (*.jpg)", options=options)
-        self.camera.save_photo(self.img_data, file_name+'.jpg')
-        self.save_photo_alert.setText('Success')
+        self.camera.save_photo(self.img_data_clone, file_name+'.jpg')
 
     def set_compression(self) -> None:
         text: str = self.choose_photo_compr.currentText()
@@ -78,12 +79,17 @@ class MainWindow(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.camera.set_photo_size()
         print('size set')
 
+    def _remove_image(self) -> None:
+        self.image_layout.removeWidget(self.canvas)
+        self.canvas.deleteLater()
+        self.canvas = None
+        self.ax.clear()
+
     def plot_image(self) -> None:
+        self.canvas = FigureCanvas(self.figure)
+        self.image_layout.addWidget(self.canvas)
         data: bytearray = self.camera.prepare_photo(self.img_data)
-        self.figure.axes.clear()
-        ax = self.figure.add_subplot(111)
-        ax.imshow(data)
-        self.figure.tight_layout()
+        self.ax.imshow(data)
         self.canvas.draw()
 
 def main() -> None:

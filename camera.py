@@ -86,17 +86,3 @@ class Camera(tools.Tools, processing.Processing):
             reply: bytes = list(data)
             self.image_photo += reply[self.num_start_jpg_digits:bytes_to_get + self.num_end_jpg_digits]
         return self.image_photo
-
-if __name__ == '__main__':
-    # start_time: time = time.time()
-    camera: Camera = Camera()
-    camera.reset()
-    camera.set_photo_size()
-    camera.take_photo()
-    bytes_to_read: int = camera.get_fbuf_len()
-    print(bytes_to_read)
-    # print("Bytes to read", bytes_to_read)
-    # obtained_data: list = camera.read_fbuf(bytes_to_read)
-    # camera.save_photo(obtained_data, camera.photos_folder_name)
-    # print("%s seconds" % (time.time() - start_time))
-    # camera.plot_photo(obtained_data)
