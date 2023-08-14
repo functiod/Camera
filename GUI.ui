@@ -20,10 +20,24 @@
       <x>0</x>
       <y>10</y>
       <width>160</width>
-      <height>251</height>
+      <height>341</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QPushButton" name="get_com_port_number">
+       <property name="text">
+        <string>Get COM port number</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="init_device_button">
+       <property name="text">
+        <string>Initialize device</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QPushButton" name="reset_settings_button">
        <property name="text">
@@ -67,10 +81,16 @@
       <x>180</x>
       <y>10</y>
       <width>160</width>
-      <height>251</height>
+      <height>341</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QLineEdit" name="get_com_port_text"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="init_device_alert"/>
+     </item>
      <item>
       <widget class="QLineEdit" name="reset_settings_text"/>
      </item>
@@ -92,7 +112,7 @@
     <property name="geometry">
      <rect>
       <x>360</x>
-      <y>710</y>
+      <y>690</y>
       <width>158</width>
       <height>28</height>
      </rect>
