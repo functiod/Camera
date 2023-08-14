@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtCore import QTimer
 import sys
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -38,6 +39,7 @@ class MainWindow(QtWidgets.QMainWindow, design.Ui_MainWindow):
     def initialize_device(self) -> None:
         self.camera: camera.Camera = camera.Camera(port = self.get_com_port_text.text())
         self.init_device_alert.setText("Success!")
+        self.init_device_button.setEnabled(False)
 
     def get_comport(self) -> None:
         self.get_com_port_text.setText(self.tools.find_comport())
@@ -55,7 +57,6 @@ class MainWindow(QtWidgets.QMainWindow, design.Ui_MainWindow):
     def take_snap(self) -> list:
         self.camera.take_photo()
         self.img_data = self.camera.read_fbuf(self.camera.get_fbuf_len())
-        self.take_photo_alert.setText('Success')
         self._remove_image()
         self.plot_image()
         self.img_data_clone[:] = self.img_data
